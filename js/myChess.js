@@ -1,4 +1,5 @@
 var game;
+var board;
 
 function start(){
     setupListeners();
@@ -15,35 +16,43 @@ function setupListeners(){
 
 function newGame(){
     game = new Chess();
-    setupBoard();
+    board = setupBoard();
 }
 
-function isValidMove(target, validMoves){
-    for(var i = 0; i < validMoves.length; i++) {
-        if(validMoves[i].indexOf(target) != -1){
-            return true;
-        }
-    }
-    return false;
+function gameIsOver(){
+    return game.game_over() || game.in_draw() || game.moves().length == 0
 }
 
 var onDrop = function(source, target, piece, newPos, oldPos, orientation){
-    var validMoves = game.moves({square: source})
-    if (!isValidMove(target, validMoves)) {
-        return 'snapback'
+    // See if the move is legal
+    // Based on http://chessboardjs.com/examples#5005
+    var move = game.move({
+        from: source,
+        to: target,
+        promotion: 'q' // Always promote pawn to queen for simplicity
+    });
+
+    // illegal move
+    if (move == null) {
+        return 'snapback';
     }
-    else {
-        game.move({from: source, to: target});
-        if(game.game_over() || game.in_draw() || game.moves().length == 0){
-            $('.reset-game').show();
-        }
+
+    else if (gameIsOver()) {
+        $('.reset-game').show();
     }
 };
 
 var onDragStart = function(source, piece, position, orientation) {
-    if(game.game_over() || game.in_draw() || game.moves().length == 0){
+    if(gameIsOver()){
         return false;
     }
+};
+
+// Update the board position after the piece snap
+// to correctly show castling, en passant, pawn promotion
+// http://chessboardjs.com/examples#5005
+var onSnapEnd = function() {
+    board.position(game.fen());
 };
 
 function setupBoard(){
@@ -53,7 +62,8 @@ function setupBoard(){
         position: 'start',
         onDrop: onDrop,
         onDragStart: onDragStart,
+        onSnapEnd: onSnapEnd,
     };
-    var board = ChessBoard('board', boardConfig);
+    return ChessBoard('board', boardConfig);
 }
 

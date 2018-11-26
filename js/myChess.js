@@ -32,13 +32,18 @@ var onDrop = function(source, target, piece, newPos, oldPos, orientation){
         promotion: 'q' // Always promote pawn to queen for simplicity
     });
 
-    // illegal move
+    // Illegal move
     if (move == null) {
         return 'snapback';
     }
 
     else if (gameIsOver()) {
         $('.reset-game').show();
+    }
+
+    else{
+        // Make computer move
+        window.setTimeout(makeComputerMove, 250);
     }
 };
 
@@ -65,5 +70,20 @@ function setupBoard(){
         onSnapEnd: onSnapEnd,
     };
     return ChessBoard('board', boardConfig);
+}
+
+// Based on example in http://chessboardjs.com/examples#5001
+var makeRandomMove = function() {
+    var possibleMoves = game.moves();
+
+    if (possibleMoves.length === 0) return;
+
+    var randomIndex = Math.floor(Math.random() * possibleMoves.length);
+    game.move(possibleMoves[randomIndex]);
+    board.position(game.fen());
+};
+
+var makeComputerMove = function(){
+    makeRandomMove();
 }
 

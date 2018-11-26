@@ -3,13 +3,13 @@ var board;
 
 var PIECE_POINTS = {
     'p' : -1,
-    'k' : -3,
+    'n' : -3,
     'b' : -3,
     'r' : -5,
     'q' : -9,
     'k' : -1000,
     'P' : 1,
-    'K' : 3,
+    'N' : 3,
     'B' : 3,
     'R' : 5,
     'Q' : 9,
@@ -91,6 +91,7 @@ var setupBoard = function(){
 // + points for white pieces
 // - points for black pieces
 var scoreBoard = function(asciiBoard){
+    console.log(asciiBoard);
     var rows = asciiBoard.split('\n');
     var score = 0;
     for(var i = 1; i < 9; i++) {

@@ -1,12 +1,24 @@
-var chess;
+var game;
 
 function start(){
-    chess = new Chess();
+    setupListeners();
+    newGame();
+}
+
+function setupListeners(){
+    $('.reset-game').hide();
+    $('#new-game').click(function(){
+        $('.reset-game').hide();
+        newGame();
+    });
+}
+
+function newGame(){
+    game = new Chess();
     setupBoard();
 }
 
 function isValidMove(target, validMoves){
-    console.log(validMoves);
     for(var i = 0; i < validMoves.length; i++) {
         if(validMoves[i].indexOf(target) != -1){
             return true;
@@ -17,12 +29,15 @@ function isValidMove(target, validMoves){
 
 function setupBoard(){
     var onDrop = function(source, target, piece, newPos, oldPos, orientation){
-        var validMoves = chess.moves({square: source})
+        var validMoves = game.moves({square: source})
         if (!isValidMove(target, validMoves)) {
             return 'snapback'
         }
         else {
-            chess.move({from: source, to: target});
+            game.move({from: source, to: target});
+            if(game.game_over() || game.in_draw() || game.moves().length == 0){
+                $('.reset-game').show();
+            }
         }
     };
 

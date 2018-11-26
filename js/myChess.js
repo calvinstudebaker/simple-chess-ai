@@ -91,7 +91,6 @@ var setupBoard = function(){
 // + points for white pieces
 // - points for black pieces
 var scoreBoard = function(asciiBoard){
-    console.log(asciiBoard);
     var rows = asciiBoard.split('\n');
     var score = 0;
     for(var i = 1; i < 9; i++) {
